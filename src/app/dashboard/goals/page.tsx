@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { deleteGoal } from "@/lib/actions/finance";
 import { monthlyAmountNeeded } from "@/lib/goal-math";
 import { formatCurrency, formatDate } from "@/lib/format";
+import { Tip } from "@/components/tip";
 import { GoalForm } from "./goal-form";
 
 export default async function GoalsPage() {
@@ -21,6 +22,14 @@ export default async function GoalsPage() {
       </div>
 
       <GoalForm />
+
+      {goals?.length === 1 && (
+        <Tip>
+          Você criou sua primeira meta! Acompanhe o progresso sempre que
+          quiser por aqui — a Stella recalcula quanto guardar por mês
+          automaticamente conforme você avança.
+        </Tip>
+      )}
 
       <ul className="flex flex-col gap-3">
         {goals?.length ? (

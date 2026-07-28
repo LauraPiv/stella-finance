@@ -44,6 +44,9 @@ export default async function DashboardLayout({
             <Link href="/dashboard/goals" className="hover:text-zinc-900">
               Metas
             </Link>
+            <Link href="/dashboard/settings" className="hover:text-zinc-900">
+              Configurações
+            </Link>
           </nav>
           <form action={logout}>
             <button

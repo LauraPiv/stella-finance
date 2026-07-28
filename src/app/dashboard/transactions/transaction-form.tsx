@@ -7,9 +7,11 @@ type Option = { id: string; name: string };
 
 export function TransactionForm({
   accounts,
+  cards,
   categories,
 }: {
   accounts: Option[];
+  cards: Option[];
   categories: (Option & { kind: string })[];
 }) {
   const [state, action, pending] = useActionState(createTransaction, undefined);
@@ -116,6 +118,27 @@ export function TransactionForm({
             ))}
           </select>
         </div>
+
+        {kind === "expense" && (
+          <div className="flex flex-col gap-1">
+            <label htmlFor="card_id" className="text-xs font-medium text-zinc-600">
+              Cartão
+            </label>
+            <select
+              id="card_id"
+              name="card_id"
+              defaultValue=""
+              className="rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+            >
+              <option value="">Sem cartão</option>
+              {cards.map((card) => (
+                <option key={card.id} value={card.id}>
+                  {card.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col gap-1">
@@ -129,6 +152,11 @@ export function TransactionForm({
           className="rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
         />
       </div>
+
+      <label className="flex items-center gap-2 text-sm text-zinc-600">
+        <input type="checkbox" name="is_recurring" className="accent-zinc-900" />
+        É uma despesa/receita recorrente (assinatura, salário fixo, etc.)
+      </label>
 
       {state?.error && <p className="text-sm text-red-600">{state.error}</p>}
 

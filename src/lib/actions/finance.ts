@@ -57,6 +57,57 @@ export async function deleteAccount(id: string) {
   revalidatePath("/dashboard/accounts");
 }
 
+export async function createCard(
+  _prevState: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const name = (formData.get("name") as string)?.trim();
+  const accountId = (formData.get("account_id") as string) || null;
+  const closingDay = formData.get("closing_day")
+    ? Number(formData.get("closing_day"))
+    : null;
+  const dueDay = formData.get("due_day") ? Number(formData.get("due_day")) : null;
+  const creditLimit = formData.get("credit_limit")
+    ? Number(formData.get("credit_limit"))
+    : null;
+
+  if (!name) {
+    return { error: "Dê um nome para o cartão." };
+  }
+
+  const { error } = await supabase.from("cards").insert({
+    user_id: user.id,
+    name,
+    account_id: accountId,
+    closing_day: closingDay,
+    due_day: dueDay,
+    credit_limit: creditLimit,
+  });
+
+  if (error) {
+    return { error: "Não foi possível criar o cartão. Tente novamente." };
+  }
+
+  revalidatePath("/dashboard/accounts");
+}
+
+export async function deleteCard(id: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  await supabase.from("cards").delete().eq("id", id).eq("user_id", user.id);
+  revalidatePath("/dashboard/accounts");
+}
+
 export async function createTransaction(
   _prevState: FormState,
   formData: FormData,
@@ -72,7 +123,9 @@ export async function createTransaction(
   const description = (formData.get("description") as string)?.trim() || null;
   const occurredOn = formData.get("occurred_on") as string;
   const accountId = (formData.get("account_id") as string) || null;
+  const cardId = (formData.get("card_id") as string) || null;
   const categoryId = (formData.get("category_id") as string) || null;
+  const isRecurring = formData.get("is_recurring") === "on";
 
   if ((kind !== "income" && kind !== "expense") || !amount || amount <= 0 || !occurredOn) {
     return { error: "Preencha o tipo, o valor e a data da transação." };
@@ -85,7 +138,9 @@ export async function createTransaction(
     description,
     occurred_on: occurredOn,
     account_id: accountId,
+    card_id: cardId,
     category_id: categoryId,
+    is_recurring: isRecurring,
   });
 
   if (error) {

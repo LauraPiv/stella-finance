@@ -44,6 +44,26 @@ export default function SignupPage() {
             <span className="text-xs text-zinc-400">Mínimo de 8 caracteres.</span>
           </div>
 
+          <label className="flex items-start gap-2 text-xs text-zinc-600">
+            <input
+              type="checkbox"
+              name="privacy_accepted"
+              required
+              className="mt-0.5 accent-zinc-900"
+            />
+            <span>
+              Li e concordo com os{" "}
+              <Link href="/termos" target="_blank" className="underline">
+                Termos de Uso
+              </Link>{" "}
+              e a{" "}
+              <Link href="/privacidade" target="_blank" className="underline">
+                Política de Privacidade
+              </Link>
+              .
+            </span>
+          </label>
+
           {state?.error && <p className="text-sm text-red-600">{state.error}</p>}
 
           <button

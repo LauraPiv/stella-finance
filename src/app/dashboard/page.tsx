@@ -2,6 +2,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { formatCurrency } from "@/lib/format";
 import { buildInsights, healthIndicator, summarizeMonth } from "@/lib/insights";
+import { expenseByCategory } from "@/lib/category-breakdown";
+import { CategoryChart } from "./category-chart";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -29,6 +31,7 @@ export default async function DashboardPage() {
   const { income, expense } = summarizeMonth(transactions ?? [], currentKey);
   const insights = buildInsights(transactions ?? []);
   const health = healthIndicator(income, expense);
+  const categoryBreakdown = expenseByCategory(transactions ?? [], currentKey);
 
   return (
     <div className="flex flex-col gap-8">
@@ -73,6 +76,13 @@ export default async function DashboardPage() {
             />
           </div>
         )}
+      </div>
+
+      <div>
+        <p className="text-sm font-medium text-zinc-700">Gastos por categoria esse mês</p>
+        <div className="mt-3 rounded-lg border border-zinc-200 p-4">
+          <CategoryChart data={categoryBreakdown} />
+        </div>
       </div>
 
       <div>

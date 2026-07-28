@@ -146,6 +146,7 @@ export type Database = {
           initial_goals: string[]
           life_phase: string | null
           onboarding_completed_at: string | null
+          privacy_accepted_at: string | null
         }
         Insert: {
           created_at?: string
@@ -153,6 +154,7 @@ export type Database = {
           initial_goals?: string[]
           life_phase?: string | null
           onboarding_completed_at?: string | null
+          privacy_accepted_at?: string | null
         }
         Update: {
           created_at?: string
@@ -160,6 +162,7 @@ export type Database = {
           initial_goals?: string[]
           life_phase?: string | null
           onboarding_completed_at?: string | null
+          privacy_accepted_at?: string | null
         }
         Relationships: []
       }
@@ -232,7 +235,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      delete_own_account: { Args: never; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
