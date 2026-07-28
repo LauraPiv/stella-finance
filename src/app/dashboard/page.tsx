@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { formatCurrency } from "@/lib/format";
 import { buildInsights, healthIndicator, summarizeMonth } from "@/lib/insights";
 import { expenseByCategory } from "@/lib/category-breakdown";
+import { Greeting } from "@/components/greeting";
 import { CategoryChart } from "./category-chart";
 
 export default async function DashboardPage() {
@@ -11,12 +12,20 @@ export default async function DashboardPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [{ data: accounts }, { data: transactions }] = await Promise.all([
-    supabase.from("accounts").select("initial_balance"),
-    supabase
-      .from("transactions")
-      .select("kind, amount, occurred_on, categories(name)"),
-  ]);
+  const [{ data: accounts }, { data: transactions }, { data: profile }] =
+    await Promise.all([
+      supabase.from("accounts").select("initial_balance"),
+      supabase
+        .from("transactions")
+        .select("kind, amount, occurred_on, categories(name)"),
+      supabase
+        .from("profiles")
+        .select("full_name")
+        .eq("id", user?.id ?? "")
+        .single(),
+    ]);
+
+  const displayName = profile?.full_name || user?.email?.split("@")[0];
 
   const accountsBalance =
     accounts?.reduce((sum, a) => sum + a.initial_balance, 0) ?? 0;
@@ -37,7 +46,7 @@ export default async function DashboardPage() {
     <div className="flex flex-col gap-8">
       <div>
         <h1 className="text-xl font-semibold text-zinc-900">
-          Olá, {user?.email?.split("@")[0]}
+          <Greeting name={displayName} />
         </h1>
         <p className="mt-1 text-sm text-zinc-500">
           Aqui está um resumo de como suas finanças estão esse mês.
@@ -76,6 +85,17 @@ export default async function DashboardPage() {
             />
           </div>
         )}
+        <details className="mt-3 text-xs text-zinc-500">
+          <summary className="cursor-pointer font-medium text-zinc-600">
+            Como calculamos isso?
+          </summary>
+          <p className="mt-1.5">
+            Comparamos quanto entrou (receitas) com quanto saiu (despesas) esse
+            mês. Quanto maior a parte da sua renda que sobra no fim do mês,
+            mais forte fica esse indicador — sem julgamento, é só um retrato do
+            momento atual para você acompanhar a evolução ao longo do tempo.
+          </p>
+        </details>
       </div>
 
       <div>

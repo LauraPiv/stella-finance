@@ -41,6 +41,27 @@ export type Database = {
         }
         Relationships: []
       }
+      achievements: {
+        Row: {
+          code: string
+          id: string
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          code: string
+          id?: string
+          unlocked_at?: string
+          user_id: string
+        }
+        Update: {
+          code?: string
+          id?: string
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       cards: {
         Row: {
           account_id: string | null
@@ -115,6 +136,7 @@ export type Database = {
           current_amount: number
           id: string
           name: string
+          priority: number
           target_amount: number
           target_date: string
           user_id: string
@@ -124,6 +146,7 @@ export type Database = {
           current_amount?: number
           id?: string
           name: string
+          priority?: number
           target_amount: number
           target_date: string
           user_id: string
@@ -133,6 +156,7 @@ export type Database = {
           current_amount?: number
           id?: string
           name?: string
+          priority?: number
           target_amount?: number
           target_date?: string
           user_id?: string
@@ -141,7 +165,9 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_url: string | null
           created_at: string
+          full_name: string | null
           id: string
           initial_goals: string[]
           life_phase: string | null
@@ -149,7 +175,9 @@ export type Database = {
           privacy_accepted_at: string | null
         }
         Insert: {
+          avatar_url?: string | null
           created_at?: string
+          full_name?: string | null
           id: string
           initial_goals?: string[]
           life_phase?: string | null
@@ -157,7 +185,9 @@ export type Database = {
           privacy_accepted_at?: string | null
         }
         Update: {
+          avatar_url?: string | null
           created_at?: string
+          full_name?: string | null
           id?: string
           initial_goals?: string[]
           life_phase?: string | null
@@ -175,6 +205,9 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          installment_group_id: string | null
+          installment_number: number | null
+          installment_total: number | null
           is_recurring: boolean
           kind: string
           occurred_on: string
@@ -188,6 +221,9 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          installment_group_id?: string | null
+          installment_number?: number | null
+          installment_total?: number | null
           is_recurring?: boolean
           kind: string
           occurred_on?: string
@@ -201,6 +237,9 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          installment_group_id?: string | null
+          installment_number?: number | null
+          installment_total?: number | null
           is_recurring?: boolean
           kind?: string
           occurred_on?: string

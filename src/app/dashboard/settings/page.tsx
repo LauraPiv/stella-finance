@@ -1,13 +1,21 @@
 import { createClient } from "@/lib/supabase/server";
 import { DeleteAccount } from "./delete-account";
 import { MfaSettings } from "./mfa-settings";
+import { ProfileSettings } from "./profile-settings";
 
 export default async function SettingsPage() {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const { data: factorsData } = await supabase.auth.mfa.listFactors();
+  const [{ data: factorsData }, { data: profile }] = await Promise.all([
+    supabase.auth.mfa.listFactors(),
+    supabase
+      .from("profiles")
+      .select("full_name, avatar_url")
+      .eq("id", user?.id ?? "")
+      .single(),
+  ]);
   const verifiedFactors = factorsData?.totp.filter((f) => f.status === "verified") ?? [];
 
   return (
@@ -15,6 +23,19 @@ export default async function SettingsPage() {
       <div>
         <h1 className="text-xl font-semibold text-zinc-900">Configurações</h1>
         <p className="mt-1 text-sm text-zinc-500">{user?.email}</p>
+      </div>
+
+      <div className="rounded-lg border border-zinc-200 p-4">
+        <p className="text-sm font-medium text-zinc-900">Perfil</p>
+        <div className="mt-3">
+          {user && (
+            <ProfileSettings
+              userId={user.id}
+              fullName={profile?.full_name ?? null}
+              avatarUrl={profile?.avatar_url ?? null}
+            />
+          )}
+        </div>
       </div>
 
       <div className="rounded-lg border border-zinc-200 p-4">

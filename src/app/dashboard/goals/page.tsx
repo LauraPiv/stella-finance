@@ -1,16 +1,17 @@
 import { createClient } from "@/lib/supabase/server";
-import { deleteGoal } from "@/lib/actions/finance";
+import { deleteGoal, moveGoalPriority } from "@/lib/actions/finance";
 import { monthlyAmountNeeded } from "@/lib/goal-math";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { Tip } from "@/components/tip";
 import { GoalForm } from "./goal-form";
+import { ContributeForm } from "./contribute-form";
 
 export default async function GoalsPage() {
   const supabase = await createClient();
   const { data: goals } = await supabase
     .from("goals")
     .select("*")
-    .order("target_date", { ascending: true });
+    .order("priority", { ascending: true });
 
   return (
     <div className="flex flex-col gap-8">
@@ -33,7 +34,7 @@ export default async function GoalsPage() {
 
       <ul className="flex flex-col gap-3">
         {goals?.length ? (
-          goals.map((goal) => {
+          goals.map((goal, i) => {
             const progress = Math.min(
               (goal.current_amount / goal.target_amount) * 100,
               100,
@@ -47,13 +48,37 @@ export default async function GoalsPage() {
             return (
               <li key={goal.id} className="rounded-lg border border-zinc-200 p-4">
                 <div className="flex items-start justify-between">
-                  <div>
-                    <p className="font-medium text-zinc-900">{goal.name}</p>
-                    <p className="text-xs text-zinc-500">
-                      {formatCurrency(goal.current_amount)} de{" "}
-                      {formatCurrency(goal.target_amount)} · até{" "}
-                      {formatDate(goal.target_date)}
-                    </p>
+                  <div className="flex items-start gap-2">
+                    <div className="flex flex-col pt-0.5">
+                      <form action={moveGoalPriority.bind(null, goal.id, "up")}>
+                        <button
+                          type="submit"
+                          disabled={i === 0}
+                          aria-label="Priorizar mais"
+                          className="block text-zinc-400 hover:text-zinc-900 disabled:opacity-20"
+                        >
+                          ▲
+                        </button>
+                      </form>
+                      <form action={moveGoalPriority.bind(null, goal.id, "down")}>
+                        <button
+                          type="submit"
+                          disabled={i === goals.length - 1}
+                          aria-label="Priorizar menos"
+                          className="block text-zinc-400 hover:text-zinc-900 disabled:opacity-20"
+                        >
+                          ▼
+                        </button>
+                      </form>
+                    </div>
+                    <div>
+                      <p className="font-medium text-zinc-900">{goal.name}</p>
+                      <p className="text-xs text-zinc-500">
+                        {formatCurrency(goal.current_amount)} de{" "}
+                        {formatCurrency(goal.target_amount)} · até{" "}
+                        {formatDate(goal.target_date)}
+                      </p>
+                    </div>
                   </div>
                   <form action={deleteGoal.bind(null, goal.id)}>
                     <button
@@ -75,6 +100,8 @@ export default async function GoalsPage() {
                 <p className="mt-2 text-xs text-zinc-500">
                   Guarde {formatCurrency(monthly)}/mês para chegar lá a tempo.
                 </p>
+
+                <ContributeForm goalId={goal.id} />
               </li>
             );
           })

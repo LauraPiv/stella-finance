@@ -139,6 +139,26 @@ export function TransactionForm({
             </select>
           </div>
         )}
+
+        {kind === "expense" && (
+          <div className="flex flex-col gap-1">
+            <label htmlFor="installments" className="text-xs font-medium text-zinc-600">
+              Parcelas
+            </label>
+            <input
+              id="installments"
+              name="installments"
+              type="number"
+              min="1"
+              max="60"
+              defaultValue="1"
+              className="rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+            />
+            <span className="text-xs text-zinc-400">
+              O valor acima é o da parcela, não o total da compra.
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col gap-1">

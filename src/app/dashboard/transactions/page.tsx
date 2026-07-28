@@ -12,7 +12,7 @@ export default async function TransactionsPage() {
       supabase
         .from("transactions")
         .select(
-          "id, kind, amount, description, occurred_on, is_recurring, accounts(name), cards(name), categories(name)",
+          "id, kind, amount, description, occurred_on, is_recurring, installment_number, installment_total, accounts(name), cards(name), categories(name)",
         )
         .order("occurred_on", { ascending: false })
         .order("created_at", { ascending: false }),
@@ -74,6 +74,11 @@ export default async function TransactionsPage() {
                   {tx.is_recurring && (
                     <span className="ml-2 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-medium text-zinc-500">
                       Recorrente
+                    </span>
+                  )}
+                  {tx.installment_total && tx.installment_total > 1 && (
+                    <span className="ml-2 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-medium text-zinc-500">
+                      {tx.installment_number}/{tx.installment_total}
                     </span>
                   )}
                 </p>
