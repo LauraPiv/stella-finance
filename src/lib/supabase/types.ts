@@ -130,6 +130,147 @@ export type Database = {
         }
         Relationships: []
       }
+      lesson_completions: {
+        Row: {
+          completed_at: string
+          correct_count: number
+          id: string
+          lesson_id: string
+          total_count: number
+          user_id: string
+          xp_earned: number
+        }
+        Insert: {
+          completed_at?: string
+          correct_count: number
+          id?: string
+          lesson_id: string
+          total_count: number
+          user_id: string
+          xp_earned: number
+        }
+        Update: {
+          completed_at?: string
+          correct_count?: number
+          id?: string
+          lesson_id?: string
+          total_count?: number
+          user_id?: string
+          xp_earned?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_completions_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lesson_exercises: {
+        Row: {
+          correct_index: number
+          created_at: string
+          explanation: string
+          id: string
+          lesson_id: string
+          options: Json
+          prompt: string
+          sort_order: number
+        }
+        Insert: {
+          correct_index: number
+          created_at?: string
+          explanation: string
+          id?: string
+          lesson_id: string
+          options: Json
+          prompt: string
+          sort_order?: number
+        }
+        Update: {
+          correct_index?: number
+          created_at?: string
+          explanation?: string
+          id?: string
+          lesson_id?: string
+          options?: Json
+          prompt?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_exercises_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lesson_tracks: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          name: string
+          sort_order: number
+          tema: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          name: string
+          sort_order?: number
+          tema: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          name?: string
+          sort_order?: number
+          tema?: string
+        }
+        Relationships: []
+      }
+      lessons: {
+        Row: {
+          created_at: string
+          id: string
+          sort_order: number
+          title: string
+          track_id: string
+          xp_reward: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          sort_order?: number
+          title: string
+          track_id: string
+          xp_reward?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          sort_order?: number
+          title?: string
+          track_id?: string
+          xp_reward?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lessons_track_id_fkey"
+            columns: ["track_id"]
+            isOneToOne: false
+            referencedRelation: "lesson_tracks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       goals: {
         Row: {
           created_at: string
