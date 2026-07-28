@@ -46,5 +46,17 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
+  if (user && (isProtectedRoute || pathname === "/verify-mfa")) {
+    const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+    const needsMfa = aal && aal.nextLevel === "aal2" && aal.currentLevel !== aal.nextLevel;
+
+    if (needsMfa && pathname !== "/verify-mfa") {
+      return NextResponse.redirect(new URL("/verify-mfa", request.url));
+    }
+    if (!needsMfa && pathname === "/verify-mfa") {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
+  }
+
   return response;
 }

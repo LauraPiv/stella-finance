@@ -8,8 +8,17 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      // OAuth sign-ins (e.g. Google) don't carry custom metadata like email/password
+      // signup does — the consent notice next to the OAuth button is the affirmative
+      // act, so we record it here on first login instead.
+      await supabase
+        .from("profiles")
+        .update({ privacy_accepted_at: new Date().toISOString() })
+        .eq("id", data.user.id)
+        .is("privacy_accepted_at", null);
+
       return NextResponse.redirect(`${origin}${next}`);
     }
   }

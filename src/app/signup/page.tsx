@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { signup } from "@/lib/actions/auth";
+import { GoogleButton } from "@/app/login/google-button";
 
 export default function SignupPage() {
   const [state, action, pending] = useActionState(signup, undefined);
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
 
   return (
     <div className="flex flex-1 items-center justify-center px-4">
@@ -49,6 +51,8 @@ export default function SignupPage() {
               type="checkbox"
               name="privacy_accepted"
               required
+              checked={privacyAccepted}
+              onChange={(e) => setPrivacyAccepted(e.target.checked)}
               className="mt-0.5 accent-zinc-900"
             />
             <span>
@@ -74,6 +78,21 @@ export default function SignupPage() {
             {pending ? "Criando conta…" : "Criar conta"}
           </button>
         </form>
+
+        <div className="mt-4 flex items-center gap-3 text-xs text-zinc-400">
+          <div className="h-px flex-1 bg-zinc-200" />
+          ou
+          <div className="h-px flex-1 bg-zinc-200" />
+        </div>
+
+        <div className="mt-4">
+          <GoogleButton disabled={!privacyAccepted} />
+          {!privacyAccepted && (
+            <p className="mt-1.5 text-xs text-zinc-400">
+              Aceite os termos acima para continuar com o Google.
+            </p>
+          )}
+        </div>
 
         <p className="mt-6 text-sm text-zinc-500">
           Já tem conta?{" "}

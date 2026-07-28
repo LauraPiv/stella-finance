@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { useSearchParams } from "next/navigation";
 import { login } from "@/lib/actions/auth";
+import { GoogleButton } from "./google-button";
 
 export function LoginForm() {
   const [state, action, pending] = useActionState(login, undefined);
@@ -60,6 +61,27 @@ export function LoginForm() {
           {pending ? "Entrando…" : "Entrar"}
         </button>
       </form>
+
+      <div className="mt-4 flex items-center gap-3 text-xs text-zinc-400">
+        <div className="h-px flex-1 bg-zinc-200" />
+        ou
+        <div className="h-px flex-1 bg-zinc-200" />
+      </div>
+
+      <div className="mt-4">
+        <GoogleButton />
+        <p className="mt-1.5 text-xs text-zinc-400">
+          Ao continuar com o Google, você concorda com nossos{" "}
+          <Link href="/termos" target="_blank" className="underline">
+            Termos de Uso
+          </Link>{" "}
+          e{" "}
+          <Link href="/privacidade" target="_blank" className="underline">
+            Política de Privacidade
+          </Link>
+          .
+        </p>
+      </div>
 
       <p className="mt-6 text-sm text-zinc-500">
         Ainda não tem conta?{" "}
