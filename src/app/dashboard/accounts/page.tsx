@@ -6,6 +6,14 @@ import { Tip } from "@/components/tip";
 import { AccountForm } from "./account-form";
 import { CardForm } from "./card-form";
 
+function initials(name: string) {
+  return name
+    .split(" ")
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase())
+    .join("");
+}
+
 export default async function AccountsPage() {
   const supabase = await createClient();
   const [{ data: accounts }, { data: cards }] = await Promise.all([
@@ -17,16 +25,9 @@ export default async function AccountsPage() {
   ]);
 
   return (
-    <div className="flex flex-col gap-12">
-      <div className="flex flex-col gap-8">
-        <div>
-          <h1 className="text-xl font-semibold text-zinc-900">Contas</h1>
-          <p className="mt-1 text-sm text-zinc-500">
-            Cadastre onde seu dinheiro vive para acompanhar receitas e despesas.
-          </p>
-        </div>
-
-        <AccountForm />
+    <div className="flex flex-col gap-10 px-[22px] pt-3.5 pb-8">
+      <div className="flex flex-col gap-4">
+        <h1 className="font-heading text-2xl font-semibold text-wine">Contas</h1>
 
         {accounts?.length === 1 && (
           <Tip>
@@ -35,82 +36,93 @@ export default async function AccountsPage() {
           </Tip>
         )}
 
-        <ul className="flex flex-col divide-y divide-zinc-100 rounded-lg border border-zinc-200">
+        <div className="flex flex-col gap-2.5">
           {accounts?.length ? (
             accounts.map((account) => (
-              <li
+              <div
                 key={account.id}
-                className="flex items-center justify-between px-4 py-3 text-sm"
+                className="flex items-center gap-3.5 rounded-[20px] border border-rose bg-white px-4 py-[18px]"
               >
-                <div>
-                  <p className="font-medium text-zinc-900">{account.name}</p>
-                  <p className="text-xs text-zinc-500">
-                    {ACCOUNT_TYPE_LABELS[account.type] ?? account.type} ·{" "}
-                    {formatCurrency(account.initial_balance)}
-                  </p>
-                </div>
+                <span className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-xl bg-cream font-heading text-sm font-semibold text-berry">
+                  {initials(account.name)}
+                </span>
+                <span className="flex flex-1 flex-col gap-0.5">
+                  <span className="font-heading text-[15.5px] font-semibold text-wine">
+                    {account.name}
+                  </span>
+                  <span className="text-[12.5px] text-wine/55">
+                    {ACCOUNT_TYPE_LABELS[account.type] ?? account.type}
+                  </span>
+                </span>
+                <span className="font-heading text-[15.5px] font-semibold text-wine">
+                  {formatCurrency(account.initial_balance)}
+                </span>
                 <form action={deleteAccount.bind(null, account.id)}>
                   <button
                     type="submit"
-                    className="text-xs font-medium text-zinc-400 underline hover:text-red-600"
+                    className="text-xs font-medium text-wine/40 underline hover:text-berry"
                   >
                     Remover
                   </button>
                 </form>
-              </li>
+              </div>
             ))
           ) : (
-            <li className="px-4 py-6 text-center text-sm text-zinc-400">
+            <p className="rounded-2xl bg-cream px-4 py-6 text-center text-sm text-wine/50">
               Nenhuma conta cadastrada ainda.
-            </li>
+            </p>
           )}
-        </ul>
-      </div>
-
-      <div className="flex flex-col gap-8">
-        <div>
-          <h2 className="text-xl font-semibold text-zinc-900">Cartões</h2>
-          <p className="mt-1 text-sm text-zinc-500">
-            Acompanhe fechamento, vencimento e limite dos seus cartões de crédito.
-          </p>
         </div>
 
-        <CardForm accounts={accounts ?? []} />
+        <AccountForm />
+      </div>
 
-        <ul className="flex flex-col divide-y divide-zinc-100 rounded-lg border border-zinc-200">
+      <div className="flex flex-col gap-4">
+        <h2 className="font-heading text-2xl font-semibold text-wine">Cartões</h2>
+
+        <div className="flex flex-col gap-2.5">
           {cards?.length ? (
             cards.map((card) => (
-              <li
+              <div
                 key={card.id}
-                className="flex items-center justify-between px-4 py-3 text-sm"
+                className="flex items-center gap-3.5 rounded-[20px] border border-rose bg-white px-4 py-[18px]"
               >
-                <div>
-                  <p className="font-medium text-zinc-900">{card.name}</p>
-                  <p className="text-xs text-zinc-500">
+                <span className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-xl bg-cream font-heading text-sm font-semibold text-berry">
+                  {initials(card.name)}
+                </span>
+                <span className="flex flex-1 flex-col gap-0.5">
+                  <span className="font-heading text-[15.5px] font-semibold text-wine">
+                    {card.name}
+                  </span>
+                  <span className="text-[12.5px] text-wine/55">
                     {card.accounts?.name ? `${card.accounts.name} · ` : ""}
                     {card.closing_day ? `fecha dia ${card.closing_day}` : ""}
                     {card.due_day ? ` · vence dia ${card.due_day}` : ""}
-                    {card.credit_limit
-                      ? ` · limite ${formatCurrency(card.credit_limit)}`
-                      : ""}
-                  </p>
-                </div>
+                  </span>
+                </span>
+                {card.credit_limit && (
+                  <span className="font-heading text-[15.5px] font-semibold text-wine">
+                    {formatCurrency(card.credit_limit)}
+                  </span>
+                )}
                 <form action={deleteCard.bind(null, card.id)}>
                   <button
                     type="submit"
-                    className="text-xs font-medium text-zinc-400 underline hover:text-red-600"
+                    className="text-xs font-medium text-wine/40 underline hover:text-berry"
                   >
                     Remover
                   </button>
                 </form>
-              </li>
+              </div>
             ))
           ) : (
-            <li className="px-4 py-6 text-center text-sm text-zinc-400">
+            <p className="rounded-2xl bg-cream px-4 py-6 text-center text-sm text-wine/50">
               Nenhum cartão cadastrado ainda.
-            </li>
+            </p>
           )}
-        </ul>
+        </div>
+
+        <CardForm accounts={accounts ?? []} />
       </div>
     </div>
   );

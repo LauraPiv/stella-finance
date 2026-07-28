@@ -4,18 +4,18 @@ export const metadata = { title: "Política de Privacidade — Stella Finance" }
 
 export default function PrivacyPage() {
   return (
-    <div className="mx-auto max-w-2xl px-6 py-12 text-sm text-zinc-700">
-      <Link href="/" className="text-xs font-medium text-zinc-500 underline">
+    <div className="mx-auto max-w-2xl px-6 py-12 text-sm text-wine/75">
+      <Link href="/" className="text-xs font-medium text-wine/50 underline">
         ← Voltar
       </Link>
-      <h1 className="mt-4 text-2xl font-semibold text-zinc-900">
+      <h1 className="mt-4 font-heading text-2xl font-semibold text-wine">
         Política de Privacidade
       </h1>
-      <p className="mt-1 text-xs text-zinc-400">Última atualização: julho de 2026</p>
+      <p className="mt-1 text-xs text-wine/40">Última atualização: julho de 2026</p>
 
       <div className="mt-8 flex flex-col gap-6">
         <section>
-          <h2 className="font-medium text-zinc-900">1. Quais dados coletamos</h2>
+          <h2 className="font-heading font-semibold text-wine">1. Quais dados coletamos</h2>
           <p className="mt-1">
             Coletamos seu e-mail e senha (para autenticação), as respostas do
             onboarding (fase de vida e objetivos) e os dados financeiros que você
@@ -24,7 +24,7 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="font-medium text-zinc-900">2. Como usamos seus dados</h2>
+          <h2 className="font-heading font-semibold text-wine">2. Como usamos seus dados</h2>
           <p className="mt-1">
             Usamos esses dados exclusivamente para operar a plataforma: exibir seu
             dashboard, calcular insights e progresso de metas, e personalizar sua
@@ -34,7 +34,9 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="font-medium text-zinc-900">3. Onde seus dados ficam armazenados</h2>
+          <h2 className="font-heading font-semibold text-wine">
+            3. Onde seus dados ficam armazenados
+          </h2>
           <p className="mt-1">
             Seus dados são armazenados de forma criptografada, em trânsito (HTTPS)
             e em repouso, em infraestrutura fornecida pela Supabase. Cada usuária
@@ -44,7 +46,7 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="font-medium text-zinc-900">4. Seus direitos (LGPD)</h2>
+          <h2 className="font-heading font-semibold text-wine">4. Seus direitos (LGPD)</h2>
           <p className="mt-1">
             Você pode, a qualquer momento: acessar todos os seus dados dentro da
             própria plataforma, corrigir informações incorretas, e excluir
@@ -54,7 +56,7 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="font-medium text-zinc-900">5. Contato</h2>
+          <h2 className="font-heading font-semibold text-wine">5. Contato</h2>
           <p className="mt-1">
             Dúvidas sobre privacidade ou tratamento de dados podem ser enviadas
             para{" "}

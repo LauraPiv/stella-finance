@@ -1,83 +1,133 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { completeOnboarding } from "@/lib/actions/onboarding";
 import { LIFE_PHASES, INITIAL_GOALS } from "@/lib/onboarding-options";
 
+const STEPS = [
+  {
+    title: "Onde você está agora?",
+    why: "Isso muda o que a Stella te mostra primeiro — e o que deixa de fora. Nenhuma resposta te tranca em nada.",
+  },
+  {
+    title: "O que mais importa nos próximos meses?",
+    why: "Uso isso pra sugerir sua primeira meta com um valor que faça sentido pra você, não um número genérico.",
+  },
+] as const;
+
 export function OnboardingForm() {
   const [state, action, pending] = useActionState(completeOnboarding, undefined);
+  const [step, setStep] = useState(0);
+  const [lifePhase, setLifePhase] = useState<string | null>(null);
+  const [goals, setGoals] = useState<string[]>([]);
+
+  const progress = ((step + 1) / STEPS.length) * 100;
+  const current = STEPS[step];
+
+  function toggleGoal(value: string) {
+    setGoals((prev) =>
+      prev.includes(value) ? prev.filter((g) => g !== value) : [...prev, value],
+    );
+  }
 
   return (
-    <form action={action} className="mx-auto flex max-w-xl flex-col gap-10 px-4 py-12">
-      <div>
-        <p className="text-sm font-medium tracking-wide text-zinc-500 uppercase">
-          Bem-vinda
-        </p>
-        <h1 className="mt-2 text-2xl font-semibold text-zinc-900">
-          Me conta um pouco sobre você
+    <form action={action} className="mx-auto flex max-w-sm flex-col gap-6 px-5 py-10">
+      <input type="hidden" name="life_phase" value={lifePhase ?? ""} />
+
+      <div className="flex items-center gap-3">
+        {step > 0 && (
+          <button
+            type="button"
+            onClick={() => setStep(step - 1)}
+            aria-label="Voltar"
+            className="p-1.5 text-xl leading-none text-wine"
+          >
+            ←
+          </button>
+        )}
+        <div className="h-1 flex-1 overflow-hidden rounded-full bg-cream">
+          <div
+            className="h-full rounded-full bg-berry transition-all duration-200"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+        <span className="font-heading text-xs font-semibold text-wine/50">
+          {step + 1}/{STEPS.length}
+        </span>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <h1 className="text-pretty font-heading text-[27px] font-semibold leading-tight tracking-tight text-wine">
+          {current.title}
         </h1>
-        <p className="mt-1 text-sm text-zinc-500">
-          Isso ajuda a Stella a personalizar seus insights e sugestões.
+        <p className="text-pretty text-[14.5px] font-light leading-relaxed text-wine/65">
+          {current.why}
         </p>
       </div>
 
-      <fieldset className="flex flex-col gap-3">
-        <legend className="text-sm font-medium text-zinc-700">
-          Qual dessas frases mais combina com sua fase de vida?
-        </legend>
-        {LIFE_PHASES.map((phase) => (
-          <label
-            key={phase.value}
-            className="flex cursor-pointer flex-col gap-0.5 rounded-lg border border-zinc-200 px-4 py-3 text-sm has-checked:border-zinc-900 has-checked:bg-zinc-50"
-          >
-            <span className="flex items-center gap-2 font-medium text-zinc-900">
-              <input
-                type="radio"
-                name="life_phase"
-                value={phase.value}
-                required
-                className="accent-zinc-900"
-              />
-              {phase.label}
-            </span>
-            {phase.hint && (
-              <span className="pl-6 text-xs text-zinc-500">{phase.hint}</span>
-            )}
-          </label>
-        ))}
-      </fieldset>
-
-      <fieldset className="flex flex-col gap-3">
-        <legend className="text-sm font-medium text-zinc-700">
-          O que você quer alcançar agora? (escolha quantas fizer sentido)
-        </legend>
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-          {INITIAL_GOALS.map((goal) => (
-            <label
-              key={goal.value}
-              className="flex cursor-pointer items-center gap-2 rounded-lg border border-zinc-200 px-3 py-2 text-sm has-checked:border-zinc-900 has-checked:bg-zinc-50"
+      {step === 0 && (
+        <div className="flex flex-col gap-2.5">
+          {LIFE_PHASES.map((phase) => (
+            <button
+              key={phase.value}
+              type="button"
+              onClick={() => {
+                setLifePhase(phase.value);
+                setStep(1);
+              }}
+              className={`min-h-14 rounded-2xl border-[1.5px] px-[18px] py-4 text-left text-[15.5px] leading-tight text-wine transition-colors hover:border-berry ${
+                lifePhase === phase.value
+                  ? "border-berry bg-cream"
+                  : "border-rose bg-white"
+              }`}
             >
-              <input
-                type="checkbox"
-                name="initial_goals"
-                value={goal.value}
-                className="accent-zinc-900"
-              />
-              {goal.label}
-            </label>
+              {phase.label}
+            </button>
           ))}
         </div>
-      </fieldset>
+      )}
 
-      {state?.error && <p className="text-sm text-red-600">{state.error}</p>}
+      {step === 1 && (
+        <>
+          <div className="flex flex-col gap-2.5">
+            {INITIAL_GOALS.map((goal) => {
+              const checked = goals.includes(goal.value);
+              return (
+                <label
+                  key={goal.value}
+                  className={`flex min-h-14 cursor-pointer items-center gap-3 rounded-2xl border-[1.5px] px-[18px] py-4 text-[15.5px] leading-tight text-wine transition-colors hover:border-berry ${
+                    checked ? "border-berry bg-cream" : "border-rose bg-white"
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    name="initial_goals"
+                    value={goal.value}
+                    checked={checked}
+                    onChange={() => toggleGoal(goal.value)}
+                    className="accent-berry"
+                  />
+                  {goal.label}
+                </label>
+              );
+            })}
+          </div>
 
-      <button
-        type="submit"
-        disabled={pending}
-        className="rounded-lg bg-zinc-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-700 disabled:opacity-50"
-      >
-        {pending ? "Salvando…" : "Continuar"}
-      </button>
+          {state?.error && (
+            <div className="rounded-2xl border border-berry bg-cream px-4 py-3.5">
+              <p className="m-0 text-sm text-wine">{state.error}</p>
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={pending}
+            className="min-h-[52px] rounded-full bg-berry px-4 py-4 font-heading text-base font-semibold text-white transition-colors hover:bg-berry-dark disabled:opacity-50"
+          >
+            {pending ? "Salvando…" : "Continuar"}
+          </button>
+        </>
+      )}
     </form>
   );
 }

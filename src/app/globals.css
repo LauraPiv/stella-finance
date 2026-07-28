@@ -1,26 +1,81 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-cream: #fbeaf0;
+  --color-rose: #ed93b1;
+  --color-berry: #d4537e;
+  --color-berry-dark: #c24571;
+  --color-wine: #4b1528;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-cream: var(--color-cream);
+  --color-rose: var(--color-rose);
+  --color-berry: var(--color-berry);
+  --color-berry-dark: var(--color-berry-dark);
+  --color-wine: var(--color-wine);
+  --font-heading: var(--font-manrope);
+  --font-sans: var(--font-work-sans);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+::selection {
+  background: var(--color-rose);
+}
+
+a {
+  color: var(--color-berry);
+}
+a:hover {
+  color: var(--color-wine);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-cream);
+  color: var(--color-wine);
+  font-family: var(--font-work-sans), sans-serif;
+}
+
+input,
+button,
+textarea,
+select {
+  font-family: var(--font-work-sans), sans-serif;
+}
+
+@keyframes stl-ring {
+  0% {
+    transform: scale(0.3);
+    opacity: 0.9;
+  }
+  40%,
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+@keyframes stl-dot {
+  0%,
+  38% {
+    opacity: 1;
+  }
+  48%,
+  94% {
+    opacity: 0;
+  }
+}
+.stl-ring-a {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: stl-ring 3s ease-out infinite;
+}
+.stl-ring-b {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: stl-ring 3s ease-out infinite;
+  animation-delay: 0.6s;
+}
+.stl-dot {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: stl-dot 3s ease-in-out infinite;
 }

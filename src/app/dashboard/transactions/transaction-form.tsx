@@ -5,6 +5,28 @@ import { createTransaction } from "@/lib/actions/finance";
 
 type Option = { id: string; name: string };
 
+function Chip({
+  label,
+  active,
+  onClick,
+}: {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`min-h-11 rounded-full border px-[15px] py-2.5 text-sm ${
+        active ? "border-berry bg-berry text-white" : "border-rose bg-white text-wine"
+      }`}
+    >
+      {label}
+    </button>
+  );
+}
+
 export function TransactionForm({
   accounts,
   cards,
@@ -16,176 +38,179 @@ export function TransactionForm({
 }) {
   const [state, action, pending] = useActionState(createTransaction, undefined);
   const [kind, setKind] = useState<"income" | "expense">("expense");
+  const [categoryId, setCategoryId] = useState<string | null>(null);
+  const [accountId, setAccountId] = useState<string | null>(null);
+  const [cardId, setCardId] = useState<string | null>(null);
+  const [recurring, setRecurring] = useState(false);
 
   const filteredCategories = categories.filter((c) => c.kind === kind);
   const today = new Date().toISOString().slice(0, 10);
 
   return (
-    <form action={action} className="flex flex-col gap-3 rounded-lg border border-zinc-200 p-4">
-      <div className="flex gap-2">
-        <label className="flex-1">
-          <input
-            type="radio"
-            name="kind"
-            value="expense"
-            checked={kind === "expense"}
-            onChange={() => setKind("expense")}
-            className="peer sr-only"
-          />
-          <span className="block cursor-pointer rounded-lg border border-zinc-300 px-3 py-2 text-center text-sm font-medium text-zinc-600 peer-checked:border-zinc-900 peer-checked:bg-zinc-900 peer-checked:text-white">
-            Despesa
-          </span>
-        </label>
-        <label className="flex-1">
-          <input
-            type="radio"
-            name="kind"
-            value="income"
-            checked={kind === "income"}
-            onChange={() => setKind("income")}
-            className="peer sr-only"
-          />
-          <span className="block cursor-pointer rounded-lg border border-zinc-300 px-3 py-2 text-center text-sm font-medium text-zinc-600 peer-checked:border-zinc-900 peer-checked:bg-zinc-900 peer-checked:text-white">
-            Receita
-          </span>
-        </label>
+    <form
+      action={action}
+      className="flex flex-col gap-5 rounded-[20px] border border-rose bg-white p-4"
+    >
+      <input type="hidden" name="category_id" value={categoryId ?? ""} />
+      <input type="hidden" name="account_id" value={accountId ?? ""} />
+      <input type="hidden" name="card_id" value={cardId ?? ""} />
+
+      <div className="flex gap-1.5 rounded-full bg-cream p-[5px]">
+        <button
+          type="button"
+          onClick={() => setKind("expense")}
+          className={`min-h-[46px] flex-1 rounded-full font-heading text-[14.5px] font-semibold ${
+            kind === "expense" ? "bg-wine text-white" : "text-wine/60"
+          }`}
+        >
+          Despesa
+        </button>
+        <button
+          type="button"
+          onClick={() => setKind("income")}
+          className={`min-h-[46px] flex-1 rounded-full font-heading text-[14.5px] font-semibold ${
+            kind === "income" ? "bg-wine text-white" : "text-wine/60"
+          }`}
+        >
+          Receita
+        </button>
+        <input type="hidden" name="kind" value={kind} />
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <div className="flex flex-col gap-1">
-          <label htmlFor="amount" className="text-xs font-medium text-zinc-600">
-            Valor
-          </label>
-          <input
-            id="amount"
-            name="amount"
-            type="number"
-            step="0.01"
-            min="0.01"
-            required
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
-          />
-        </div>
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="amount" className="text-[13px] text-wine/60">
+          Valor
+        </label>
+        <input
+          id="amount"
+          name="amount"
+          type="number"
+          step="0.01"
+          min="0.01"
+          placeholder="R$ 0,00"
+          required
+          className="w-full rounded-2xl border-[1.5px] border-rose bg-white px-4 py-4 font-heading text-[30px] font-semibold text-wine outline-none focus:border-berry"
+        />
+      </div>
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="occurred_on" className="text-xs font-medium text-zinc-600">
-            Data
-          </label>
-          <input
-            id="occurred_on"
-            name="occurred_on"
-            type="date"
-            defaultValue={today}
-            required
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
-          />
-        </div>
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="occurred_on" className="text-[13px] text-wine/60">
+          Data
+        </label>
+        <input
+          id="occurred_on"
+          name="occurred_on"
+          type="date"
+          defaultValue={today}
+          required
+          className="w-full rounded-2xl border-[1.5px] border-rose bg-white px-4 py-3.5 text-base text-wine outline-none focus:border-berry"
+        />
+      </div>
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="category_id" className="text-xs font-medium text-zinc-600">
-            Categoria
-          </label>
-          <select
-            id="category_id"
-            name="category_id"
-            defaultValue=""
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
-          >
-            <option value="">Sem categoria</option>
-            {filteredCategories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <label htmlFor="account_id" className="text-xs font-medium text-zinc-600">
-            Conta
-          </label>
-          <select
-            id="account_id"
-            name="account_id"
-            defaultValue=""
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
-          >
-            <option value="">Sem conta</option>
-            {accounts.map((account) => (
-              <option key={account.id} value={account.id}>
-                {account.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {kind === "expense" && (
-          <div className="flex flex-col gap-1">
-            <label htmlFor="card_id" className="text-xs font-medium text-zinc-600">
-              Cartão
-            </label>
-            <select
-              id="card_id"
-              name="card_id"
-              defaultValue=""
-              className="rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
-            >
-              <option value="">Sem cartão</option>
-              {cards.map((card) => (
-                <option key={card.id} value={card.id}>
-                  {card.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-
-        {kind === "expense" && (
-          <div className="flex flex-col gap-1">
-            <label htmlFor="installments" className="text-xs font-medium text-zinc-600">
-              Parcelas
-            </label>
-            <input
-              id="installments"
-              name="installments"
-              type="number"
-              min="1"
-              max="60"
-              defaultValue="1"
-              className="rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+      <div className="flex flex-col gap-2">
+        <span className="text-[13px] text-wine/60">Categoria</span>
+        <div className="flex flex-wrap gap-1.5">
+          {filteredCategories.map((category) => (
+            <Chip
+              key={category.id}
+              label={category.name}
+              active={categoryId === category.id}
+              onClick={() => setCategoryId(categoryId === category.id ? null : category.id)}
             />
-            <span className="text-xs text-zinc-400">
-              O valor acima é o da parcela, não o total da compra.
-            </span>
-          </div>
-        )}
+          ))}
+        </div>
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="description" className="text-xs font-medium text-zinc-600">
+      <div className="flex flex-col gap-2">
+        <span className="text-[13px] text-wine/60">Conta ou cartão</span>
+        <div className="flex flex-wrap gap-1.5">
+          {accounts.map((acc) => (
+            <Chip
+              key={acc.id}
+              label={acc.name}
+              active={accountId === acc.id}
+              onClick={() => setAccountId(accountId === acc.id ? null : acc.id)}
+            />
+          ))}
+          {kind === "expense" &&
+            cards.map((card) => (
+              <Chip
+                key={card.id}
+                label={card.name}
+                active={cardId === card.id}
+                onClick={() => setCardId(cardId === card.id ? null : card.id)}
+              />
+            ))}
+        </div>
+      </div>
+
+      {kind === "expense" && (
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="installments" className="text-[13px] text-wine/60">
+            Parcelas
+          </label>
+          <input
+            id="installments"
+            name="installments"
+            type="number"
+            min="1"
+            max="60"
+            defaultValue="1"
+            className="w-24 rounded-2xl border-[1.5px] border-rose bg-white px-4 py-3.5 text-base text-wine outline-none focus:border-berry"
+          />
+          <span className="text-xs text-wine/45">
+            O valor acima é o da parcela, não o total da compra.
+          </span>
+        </div>
+      )}
+
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="description" className="text-[13px] text-wine/60">
           Descrição (opcional)
         </label>
         <input
           id="description"
           name="description"
           placeholder="Ex: Mercado do mês"
-          className="rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+          className="w-full rounded-2xl border-[1.5px] border-rose bg-white px-4 py-3.5 text-base text-wine outline-none focus:border-berry"
         />
       </div>
 
-      <label className="flex items-center gap-2 text-sm text-zinc-600">
-        <input type="checkbox" name="is_recurring" className="accent-zinc-900" />
-        É uma despesa/receita recorrente (assinatura, salário fixo, etc.)
-      </label>
+      <button
+        type="button"
+        onClick={() => setRecurring(!recurring)}
+        className="flex min-h-[52px] items-center justify-between gap-3 rounded-2xl border border-rose bg-white px-4 py-3.5 text-left"
+      >
+        <span className="flex flex-col gap-0.5">
+          <span className="text-[15px] text-wine">É recorrente?</span>
+          <span className="text-[12.5px] text-wine/55">
+            Repete todo mês na mesma data
+          </span>
+        </span>
+        <span
+          className="relative h-[26px] w-11 shrink-0 rounded-full transition-colors"
+          style={{ background: recurring ? "var(--color-berry)" : "rgba(75,21,40,0.18)" }}
+        >
+          <span
+            className="absolute top-[3px] h-5 w-5 rounded-full bg-white transition-all"
+            style={{ left: recurring ? "21px" : "3px" }}
+          />
+        </span>
+        <input type="hidden" name="is_recurring" value={recurring ? "on" : ""} />
+      </button>
 
-      {state?.error && <p className="text-sm text-red-600">{state.error}</p>}
+      {state?.error && (
+        <div className="rounded-2xl border border-berry bg-cream px-4 py-3.5">
+          <p className="m-0 text-sm text-wine">{state.error}</p>
+        </div>
+      )}
 
       <button
         type="submit"
         disabled={pending}
-        className="self-start rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-700 disabled:opacity-50"
+        className="min-h-[52px] rounded-full bg-berry font-heading text-base font-semibold text-white transition-colors hover:bg-berry-dark disabled:opacity-50"
       >
-        {pending ? "Salvando…" : "Adicionar transação"}
+        {pending ? "Salvando…" : "Salvar transação"}
       </button>
     </form>
   );

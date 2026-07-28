@@ -20,7 +20,7 @@ export function GoogleButton({ disabled }: { disabled?: boolean }) {
       type="button"
       onClick={handleClick}
       disabled={loading || disabled}
-      className="flex items-center justify-center gap-2 rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 disabled:opacity-50"
+      className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border-[1.5px] border-wine/20 bg-white px-4 font-heading text-[15.5px] font-semibold text-wine transition-colors hover:bg-cream disabled:opacity-50"
     >
       <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true">
         <path

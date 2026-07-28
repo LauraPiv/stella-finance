@@ -16,16 +16,16 @@ export function ContributeForm({ goalId }: { goalId: string }) {
         min="0.01"
         placeholder="Valor do aporte"
         required
-        className="w-32 rounded-lg border border-zinc-300 px-2 py-1.5 text-xs outline-none focus:border-zinc-900"
+        className="w-32 rounded-full border-[1.5px] border-rose bg-white px-3.5 py-2 text-[13px] text-wine outline-none focus:border-berry"
       />
       <button
         type="submit"
         disabled={pending}
-        className="rounded-lg border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-700 transition-colors hover:bg-zinc-50 disabled:opacity-50"
+        className="rounded-full bg-cream px-3.5 py-2 font-heading text-[13px] font-semibold text-berry transition-colors hover:bg-rose/40 disabled:opacity-50"
       >
         {pending ? "Adicionando…" : "Registrar aporte"}
       </button>
-      {state?.error && <span className="text-xs text-red-600">{state.error}</span>}
+      {state?.error && <span className="text-xs text-berry">{state.error}</span>}
     </form>
   );
 }

@@ -68,19 +68,17 @@ export function MfaSettings({ factors }: { factors: Factor[] }) {
   if (factors.length > 0) {
     return (
       <div className="flex flex-col gap-3">
-        <p className="text-sm text-zinc-600">
-          Autenticação de dois fatores ativada.
-        </p>
+        <p className="m-0 text-sm text-wine/70">Autenticação de dois fatores ativada.</p>
         {factors.map((factor) => (
           <div key={factor.id} className="flex items-center justify-between">
-            <span className="text-sm text-zinc-700">
+            <span className="text-sm text-wine">
               {factor.friendly_name || "Aplicativo autenticador"}
             </span>
             <button
               type="button"
               disabled={busy}
               onClick={() => removeFactor(factor.id)}
-              className="text-xs font-medium text-red-600 underline disabled:opacity-50"
+              className="text-xs font-medium text-berry underline disabled:opacity-50"
             >
               Desativar
             </button>
@@ -93,7 +91,7 @@ export function MfaSettings({ factors }: { factors: Factor[] }) {
   if (enrollment) {
     return (
       <div className="flex flex-col gap-3">
-        <p className="text-sm text-zinc-600">
+        <p className="m-0 text-sm text-wine/70">
           Escaneie o QR code com seu app autenticador (Google Authenticator, Authy,
           etc.) e digite o código gerado.
         </p>
@@ -101,9 +99,9 @@ export function MfaSettings({ factors }: { factors: Factor[] }) {
         <img
           src={enrollment.qrCode}
           alt="QR code para ativar autenticação de dois fatores"
-          className="h-40 w-40"
+          className="h-40 w-40 rounded-2xl border border-rose"
         />
-        <p className="text-xs text-zinc-400">
+        <p className="m-0 text-xs text-wine/45">
           Não consegue escanear? Use o código:{" "}
           <code className="font-mono">{enrollment.secret}</code>
         </p>
@@ -113,22 +111,22 @@ export function MfaSettings({ factors }: { factors: Factor[] }) {
           inputMode="numeric"
           maxLength={6}
           placeholder="000000"
-          className="w-32 rounded-lg border border-zinc-300 px-3 py-2 text-center text-lg tracking-[0.3em] outline-none focus:border-zinc-900"
+          className="w-32 rounded-2xl border-[1.5px] border-rose bg-white px-3 py-2.5 text-center text-lg tracking-[0.3em] text-wine outline-none focus:border-berry"
         />
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="m-0 text-sm text-berry">{error}</p>}
         <div className="flex gap-3">
           <button
             type="button"
             onClick={confirmEnrollment}
             disabled={busy || code.length !== 6}
-            className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-700 disabled:opacity-50"
+            className="rounded-full bg-berry px-4 py-2.5 font-heading text-sm font-semibold text-white transition-colors hover:bg-berry-dark disabled:opacity-50"
           >
             {busy ? "Confirmando…" : "Confirmar"}
           </button>
           <button
             type="button"
             onClick={() => setEnrollment(null)}
-            className="text-sm font-medium text-zinc-500 underline"
+            className="font-heading text-sm font-semibold text-wine/60"
           >
             Cancelar
           </button>
@@ -138,17 +136,17 @@ export function MfaSettings({ factors }: { factors: Factor[] }) {
   }
 
   return (
-    <div className="flex flex-col gap-2">
-      <p className="text-sm text-zinc-600">
+    <div className="flex flex-col gap-2.5">
+      <p className="m-0 text-sm text-wine/70">
         Adicione uma camada extra de segurança pedindo um código do seu celular
         toda vez que você entrar.
       </p>
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="m-0 text-sm text-berry">{error}</p>}
       <button
         type="button"
         onClick={startEnrollment}
         disabled={busy}
-        className="self-start rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 disabled:opacity-50"
+        className="min-h-11 self-start rounded-full border-[1.5px] border-berry px-4 font-heading text-[13.5px] font-semibold text-berry transition-colors hover:bg-cream disabled:opacity-50"
       >
         Ativar autenticação de dois fatores
       </button>

@@ -9,10 +9,12 @@ export function ProfileSettings({
   userId,
   fullName,
   avatarUrl,
+  email,
 }: {
   userId: string;
   fullName: string | null;
   avatarUrl: string | null;
+  email: string;
 }) {
   const router = useRouter();
   const [state, action, pending] = useActionState(updateProfile, undefined);
@@ -51,21 +53,27 @@ export function ProfileSettings({
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center gap-4">
+    <div className="flex flex-col gap-4 rounded-[20px] border border-rose bg-cream p-[18px]">
+      <div className="flex items-center gap-3.5">
         {preview ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={preview}
             alt="Sua foto de perfil"
-            className="h-14 w-14 rounded-full object-cover"
+            className="h-12 w-12 rounded-full object-cover"
           />
         ) : (
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-zinc-100 text-lg font-medium text-zinc-400">
-            {(fullName || "?").charAt(0).toUpperCase()}
-          </div>
+          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-berry font-heading text-lg font-semibold text-white">
+            {(fullName || email || "?").charAt(0).toUpperCase()}
+          </span>
         )}
-        <label className="text-xs font-medium text-zinc-600 underline cursor-pointer">
+        <div className="flex flex-1 flex-col gap-0.5">
+          <p className="m-0 font-heading text-[17px] font-semibold text-wine">
+            {fullName || "Sem nome ainda"}
+          </p>
+          <p className="m-0 text-[13px] text-wine/60">{email}</p>
+        </div>
+        <label className="font-heading text-[13px] font-semibold text-berry underline cursor-pointer">
           {uploading ? "Enviando…" : "Trocar foto"}
           <input
             type="file"
@@ -76,30 +84,25 @@ export function ProfileSettings({
           />
         </label>
       </div>
-      {uploadError && <p className="text-sm text-red-600">{uploadError}</p>}
+      {uploadError && <p className="m-0 text-sm text-berry">{uploadError}</p>}
 
-      <form action={action} className="flex flex-wrap items-end gap-3">
-        <div className="flex flex-col gap-1">
-          <label htmlFor="full_name" className="text-xs font-medium text-zinc-600">
-            Nome
-          </label>
-          <input
-            id="full_name"
-            name="full_name"
-            defaultValue={fullName ?? ""}
-            placeholder="Como podemos te chamar?"
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
-          />
-        </div>
+      <form action={action} className="flex items-end gap-2">
+        <input
+          id="full_name"
+          name="full_name"
+          defaultValue={fullName ?? ""}
+          placeholder="Como podemos te chamar?"
+          className="flex-1 rounded-2xl border-[1.5px] border-rose bg-white px-4 py-3 text-[15px] text-wine outline-none focus:border-berry"
+        />
         <button
           type="submit"
           disabled={pending}
-          className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 disabled:opacity-50"
+          className="min-h-[46px] rounded-full bg-berry px-4 font-heading text-[13.5px] font-semibold text-white disabled:opacity-50"
         >
-          {pending ? "Salvando…" : "Salvar nome"}
+          {pending ? "Salvando…" : "Salvar"}
         </button>
       </form>
-      {state?.error && <p className="text-sm text-red-600">{state.error}</p>}
+      {state?.error && <p className="m-0 text-sm text-berry">{state.error}</p>}
     </div>
   );
 }

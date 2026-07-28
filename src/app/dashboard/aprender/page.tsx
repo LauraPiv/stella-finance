@@ -1,6 +1,7 @@
 import { BEGINNER_TRACK } from "@/lib/learning-content";
 import { ACHIEVEMENTS } from "@/lib/achievements";
 import { createClient } from "@/lib/supabase/server";
+import { StellaSparkle } from "@/components/stella-logo";
 
 export default async function LearnPage() {
   const supabase = await createClient();
@@ -14,55 +15,63 @@ export default async function LearnPage() {
   const unlocked = new Set(unlockedRows?.map((a) => a.code));
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8 px-[22px] pt-3.5 pb-8">
       <div>
-        <h1 className="text-xl font-semibold text-zinc-900">Conquistas</h1>
-        <p className="mt-1 text-sm text-zinc-500">
+        <h1 className="font-heading text-2xl font-semibold text-wine">Conquistas</h1>
+        <p className="mt-1 text-[13.5px] text-wine/55">
           Marcos que você já alcançou na sua jornada financeira.
         </p>
       </div>
 
-      <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <div className="grid grid-cols-2 gap-2.5">
         {ACHIEVEMENTS.map((achievement) => {
           const isUnlocked = unlocked.has(achievement.code);
           return (
-            <li
+            <div
               key={achievement.code}
-              className={
-                isUnlocked
-                  ? "rounded-lg border border-zinc-200 bg-amber-50 p-4"
-                  : "rounded-lg border border-zinc-200 p-4 opacity-50"
-              }
+              className={`flex min-h-[120px] flex-col items-start gap-2 rounded-[20px] p-3.5 ${
+                isUnlocked ? "border-[1.5px] border-berry bg-cream" : "border border-rose bg-white opacity-60"
+              }`}
             >
-              <p className="font-medium text-zinc-900">
-                {isUnlocked ? "🏆" : "🔒"} {achievement.title}
-              </p>
-              <p className="mt-1 text-xs text-zinc-500">{achievement.description}</p>
-            </li>
+              <span
+                className="flex h-[34px] w-[34px] items-center justify-center rounded-full"
+                style={{ background: isUnlocked ? "var(--color-berry)" : "var(--color-cream)" }}
+              >
+                <StellaSparkle size={17} color={isUnlocked ? "white" : "var(--color-rose)"} />
+              </span>
+              <span className="font-heading text-sm font-semibold leading-tight text-wine">
+                {achievement.title}
+              </span>
+              <span className="text-[11.5px] leading-relaxed text-wine/55">
+                {achievement.description}
+              </span>
+            </div>
           );
         })}
-      </ul>
+      </div>
 
       <div>
-        <h2 className="text-xl font-semibold text-zinc-900">
+        <h2 className="font-heading text-2xl font-semibold text-wine">
           Trilha para iniciantes
         </h2>
-        <p className="mt-1 text-sm text-zinc-500">
+        <p className="mt-1 text-[13.5px] text-wine/55">
           Conceitos financeiros explicados de forma simples, no seu tempo.
         </p>
       </div>
 
-      <ol className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3">
         {BEGINNER_TRACK.map((lesson, i) => (
-          <li key={lesson.title} className="rounded-lg border border-zinc-200 p-4">
-            <p className="text-xs font-medium text-zinc-400">
+          <div key={lesson.title} className="rounded-[20px] border border-rose bg-white p-4">
+            <p className="m-0 text-xs font-medium text-wine/40">
               {String(i + 1).padStart(2, "0")}
             </p>
-            <h2 className="mt-1 font-medium text-zinc-900">{lesson.title}</h2>
-            <p className="mt-1.5 text-sm text-zinc-600">{lesson.body}</p>
-          </li>
+            <h3 className="m-0 mt-1 font-heading text-[15.5px] font-semibold text-wine">
+              {lesson.title}
+            </h3>
+            <p className="mt-1.5 text-sm leading-relaxed text-wine/65">{lesson.body}</p>
+          </div>
         ))}
-      </ol>
+      </div>
     </div>
   );
 }
